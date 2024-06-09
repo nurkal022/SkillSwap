@@ -1,0 +1,172 @@
+{% extends 'main/base.html' %}
+
+{% load crispy_forms_tags %}
+{% load embed_video_tags %}
+{% load static %}
+
+{% block style %}
+        <style>
+                h1{
+                color:red;
+                }
+
+                div.body{
+                        position: relative;
+                        left: 20px;
+                        top: 100px;
+                }
+                h1.mb-5{
+                        
+                        position: relative;
+                        left: 500px;    
+                }
+              
+
+        </style>
+
+    <link href="http://vjs.zencdn.net/7.0/video-js.min.css" rel="stylesheet">
+    <script src="http://vjs.zencdn.net/7.0/video.min.js"></script>
+{% endblock %}
+
+
+{% block content %}
+        <div class="body">
+
+                
+        {% for m in menu %}
+
+                
+                
+                {% if user.groups.first.name == 'moderator' %}
+                <!-- <p>Group name: {{ user.groups.first.name }}</p> -->
+                <form action="{% url 'accept_course' m.pk %}" method="post">
+                        {% csrf_token %}
+                        <input type="submit" class="btn btn-info" value="Publish/Unpublish course" style="position: absolute; right: 20px;">
+                      </form>
+
+                {% elif user.groups.first.name == 'teacher' %}    
+                <p>You are the author</p>  
+                {% else %} 
+                        {% if lesson %}
+                        <h3><a class="btn btn-danger" href="{% url 'remove_course' id %}">UnEnroll from a Course</a></h3>
+                        {% else %}
+                                {% if m.idUser == user.pk %}
+                                        <h3><a class="btn btn-danger" href="{% url 'delete_course' m.pk %}">Delete course</a></h3>
+                                {% else %}
+                                        {% if m.price <= user.learner.coins %}
+                                        <h3><a class="btn btn-success" id="enroll" href="{% url 'add_course_to_user' id %}">Enroll to a Course</a></h3>
+                                        {% else %}
+                                        <h3><a class="btn btn-danger" id="enroll" href="#">You don't have enough coins!</a></h3>
+                                        {% endif %}
+                                        <!-- <h3><a class="btn btn-success" id="enroll" href="{% url 'my_view' id %}">Add course to cart</a></h3> -->
+                                {% endif %}
+                        {% endif %}
+                {% endif %}
+
+
+                
+                <span><img class="m-3" src="{{ m.photo.url }}" width="200" height="200" alt="MyPhoto" align="left"> &ensp;  
+                        <h3 class="fw-bold">{{m.title}}</h3> </span><span class="fa fa-star checked" style="color: orange;"></span>
+                        {{m.average_rating|floatformat:1}}
+                      
+                <p class="my-3 pb-5 col-8">{{m.content}}</p>
+                <p class="my-3 pb-5 col-8"><img src="/media/coin.png" alt="no" style="width: 20px; height: 20px"> {{m.price}} </p>
+
+
+                {% if m.video %}
+                <center><div class="container justify-content-center m-5 p-5"  >
+                        <video id="example_video_1" class="video-js" controls preload="none" width="640" height="264" poster="{{ m.photo.url }}" data-setup="{}">
+                                <source src="{{m.video.url}}" type="video/mp4">
+
+                                <track kind="captions" src="../shared/example-captions.vtt" srclang="en" label="English">
+                                <track kind="subtitles" src="../shared/example-captions.vtt" srclang="en" label="English">
+                                <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+                        </video>
+                </div></center>
+                {% endif %}<br><br>
+
+                <center><div class="p-8">
+                <h2>Author: </h2>
+                <span><img class="m-3" src="{{ author.learner.photo.url }}" width="200" height="200" alt="MyPhoto" align="centre"> &ensp;  <h3 class="fw-bold">{{author.learner.name}}</h3> </span>
+                </div></center>
+                {% if m.idUser == user.pk %}
+                        <center><a href="#" class="btn btn-outline-info">This is your course</a></center>
+                {% endif %}
+
+              
+                
+                <br> <br> 
+                {% if lesson  %}
+                        <center><a href="#" class="btn btn-primary">Contacts: {{m.number|linebreaks}}</a></center>
+                        <center><a href="#" class="btn btn-info">Skills: {{m.skills|linebreaks}}</a></center>
+                {% else %}             
+                        <center><h3><a class="btn btn-primary" href="#enroll">Enroll first to see contacts</a></h3></center>                
+                {% endif %}
+                <br>
+
+                
+                {% for comment in comments %}
+                <h3>Comments</h3>
+                        <div class="comments" style="padding: 10px;"> 
+                        <p class="font-weight-bold"> 
+                        {{ comment.name }} 
+                        <span class=" text-muted font-weight-normal"> 
+                        {{ comment.created_on }}
+                        </span>
+                        </p>
+                        </span><span class="fa fa-star checked" style="color: orange;"></span>
+                        {{comment.rate}}
+                        {{ comment.body | linebreaks }}
+                        </div>
+                        {% endfor %}
+                        <center>               
+                <!-- <div class="card-body">
+                        {% if new_comment %}
+                            <div class="alert alert-success" role="alert" pl-4>
+                                You successfully posted a comment
+                            </div>
+                        {% else %}
+                            <h3>Leave a comment</h3>
+                            <form method="post" style="margin-top: 1.3em;">
+                                {{ comment_form.as_p }}
+                                {% csrf_token %}
+                    
+                                {% if comment_form.errors.rate %}
+                                    <div class="alert alert-warning" role="alert">
+                                        {{ comment_form.errors.rate }}
+                                    </div>
+                                {% endif %}
+                    
+                                <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                            </form>
+                        {% endif %}
+                    </div> -->
+                    <div class="card-body">
+                        {% if new_comment %}
+                            <div class="alert alert-success" role="alert">
+                                <strong>Success!</strong> You successfully posted a comment.
+                            </div>
+                            
+                        {% else %}
+                            <h3>Leave a comment</h3>
+                            <form method="post" style="margin-top: 1.3em;">
+                                {{ comment_form.as_p }}
+                                {% csrf_token %}
+                    
+                                {% if comment_form.errors.rate %}
+                                    <div class="alert alert-warning" role="alert">
+                                        <strong>Warning!</strong> {{ comment_form.errors.rate }}
+                                    </div>
+                                {% endif %}
+                    
+                                <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </center>
+<!-- btn btn-success -->
+
+        {% endfor %}
+        </div>
+
+{% endblock %}

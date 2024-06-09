@@ -1,0 +1,17 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+
+<!-- Assuming you have a list of courses, e.g., courses_list -->
+{% for course in courses_list %}
+    <div class="course-card">
+        <h3>{{ course.title }}</h3>
+        <p>{{ course.content }}</p>
+        <p>Price: ${{ course.price }}</p>
+        <p>Average Rating: {{ course.average_rating|floatformat:1 }}</p>
+        <!-- Add other course details as needed -->
+    </div>
+{% endfor %}
+
+
+{% endblock %}

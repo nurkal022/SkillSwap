@@ -1,0 +1,54 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block style %} 
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'main/catalogue.css' %}">
+{% endblock %}
+
+{% block content %}
+<aside class="sidebar">
+    <h2>Catalogue</h2>
+    <ul class="category-list">
+        <li>
+            {% if cat_selected == 0 %} 
+                <strong>All categories</strong>
+            {% else %} 
+                <a href="{% url 'catalogue' %}">All categories</a>
+            {% endif %}
+        </li>
+        {% for c in cats %} 
+            <li>
+                {% if c.pk == cat_selected %} 
+                    <strong>{{ c.name }}</strong>
+                {% else %} 
+                    <a href="{{ c.get_absolute_url }}">{{ c.name }}</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</aside>
+
+<div class="row justify-content-start">
+    {% block course %}
+        {% for m in menu %}
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="course-item">
+                    <img class="img-fluid" src="{{ m.photo.url }}" alt="{{ m.title }}">
+                    <div class="course-details">
+                        <h3>{{ m.title }}</h3>
+                        <div class="rating">
+                            <span class="fa fa-star checked" style="color: orange;"></span>
+                            {{ m.average_rating|floatformat:1 }}
+                        </div>
+                        <p class="description">{{ m.content }}</p>
+                        <a href="{% if user.is_authenticated %}{{ m.get_absolute_url }}{% else %}{% url 'login' %}{% endif %}" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endblock course %}
+</div>
+{% endblock content %}

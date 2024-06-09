@@ -1,0 +1,7 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<h1>Game Limit Exceeded</h1>
+    <p>You have reached the maximum number of tries for today. Please try again tomorrow.</p>
+    <p>Time left until the next try: {{ remaining_time}}</p>
+{% endblock %}

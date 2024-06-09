@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% load static %}
+  {% load crispy_forms_tags %}
+        <!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta charset="UTF-8">
+        <meta http-equiv=”X-UA-Compatible” content=”IE=edge”>
+        <meta name=”viewport” content=”width=device-width, initial-scale=1.0″>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <title>{{title}}</title>
+        <!-- <link rel="stylesheet" href="{% static 'main/mainpage.css' %}"> -->
+
+          
+      
+        <!-- star rating link  -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    
+      <!-- local bootstrap -->
+        <!-- <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="{% static 'main/mainform.css' %}" rel="stylesheet"> -->
+      
+        <!-- Add this in the head section of your HTML
+          <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
+     
+
+          <!-- Google Fonts -->
+  <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Krub:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet"> -->
+
+    <!-- Template Main CSS File -->
+    <!-- <link href="/media/style.css" rel="stylesheet"> -->
+
+    <!--Capthca link  -->
+        <!-- <script src="https://www.google.com/recaptcha/enterprise.js?render=6LfUim4kAAAAAFdvAdzFkzmEPYxebznU0UGI40Yq"></script>
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script> -->
+
+    <!-- CSS FILES -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <link href="{% static 'css/bootstrap-icons.css' %}" rel="stylesheet">
+
+    <link href="{% static 'css/magnific-popup.css' %}" rel="stylesheet">
+
+    <link href="{% static 'css/templatemo-first-portfolio-style.css' %}" rel="stylesheet">      
+
+
+
+    {% block style %}
+    {% endblock %}
+
+</head>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+             
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+      <span class="navbar-toggler-icon"></span>
+      <img src="{% static 'django.webp' %}" alt="Logo" width="25"> 
+      </button> 
+      <span class="navbar-icon"><img src="{% static 'logo.jpeg' %}" alt="Logo" width="50"> </span>
+      
+      <a class="navbar-brand" href="{% url 'mainpage' %}">SkillSwap</a>
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="navbar-nav">
+        <li class="nav-item active">
+           <a class="nav-link" href="{% url 'mainpage' %}">Mainpage <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+           <a class="nav-link" href="{% url 'catalogue' %}">Catalogue</a>
+           
+        </li>
+        <li class="nav-item">
+          {% if user.groups.first.name == 'moderator' and user.is_authenticated %} <a class="nav-link" href="{% url 'moderator' %}">Moderator</a> {% endif %}
+       </li>
+      </ul>
+
+
+
+
+      <!-- <form class="form-inline" action="{% url 'searchbar' %}" method="get">
+        <input class="form-control mr-sm-2" type="text" name="search"> 
+        <button class="btn btn-primary my-2 my-sm-0" type="submit">
+          Search
+        </button>
+      </form> -->
+
+      <form class="form-inline" action="{% url 'searchbar' %}" method="get">
+        <input class="form-control mr-sm-2" type="text" name="search" placeholder="Search">
+          <li class="btn">
+            <a class="dropdown-toggle" href="#" data-toggle="dropdown">More</a>
+
+              <div class="dropdown-menu " aria-labelledby="navbarDropdownMenuLink">
+                <input class="form-control mr-sm-2" type="number" name="min_price" placeholder="Min Price"><br>
+                <input class="form-control mr-sm-2 " type="number" name="max_price" placeholder="Max Price"><br>
+                <input class="form-control mr-sm-2" type="number" name="min_rating" placeholder="Min Rating"><br>
+
+              <select class="form-control mr-sm-2" name="category" data-toggle="dropdown">
+                <option value="" selected disabled>Select a category</option>
+                {% for c in cats %}
+                    <option value="{{ c.id }}">{{ c.name }}</option>
+                {% endfor %}
+            </select>
+
+              </div>
+
+              <!-- <select class="dropdown-toggle" name="category">
+                <option value="" selected disabled>Select a category</option>
+                {% for c in cats %}
+                    <option value="{{ c.id }}">{{ c.name }}</option>
+                {% endfor %}
+            </select> -->
+
+          </li>
+        <button class="btn btn-primary my-2 my-sm-0" type="submit">
+            Search
+        </button>
+    </form>
+    
+
+      <ul class="navbar-nav ml-md-auto">
+        <li class="nav-item active">
+          {%if  user.is_authenticated %} <a class="nav-link" href="{% url 'create' %}">Create course <span class="sr-only">(current)</span></a> {% endif %}
+        </li>
+        <li class="nav-item active">
+          {%if user.is_authenticated %} <a class="nav-link" href="/admin">Admin<span class="sr-only">(current)</span></a> {% endif %}
+        </li>
+        <li class="nav-item active">
+          {%if user.is_authenticated %} <a class="nav-link" href="/game">Daily game<span class="sr-only">(current)</span></a> {% endif %}
+        </li>
+        <li class="nav-item active">
+          {% if  user.is_authenticated %}
+          <!-- <img src="media/coin.png" alt="no" style="width: 20px; height: 20px"> -->
+           <p class="nav-link"><img src="/media/coin.png" alt="no" style="width: 20px; height: 20px"> {{user.learner.coins}}<span class="sr-only">(current)</span></a>
+           {% endif %}
+        </li>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        
+        <li class="nav-item dropdown">
+           <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown">{{user}}</a>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+            {% if user.is_authenticated %} 
+            <a class="dropdown-item" href="{% url 'profile' %}">Profile</a> 
+            <a class="dropdown-item" href="{% url 'notifications' %}">Notifications</a>
+            {% endif %}
+             <a class="dropdown-item" href="{% url 'login' %}">Log in</a>
+              <a class="dropdown-item" href="{% url 'register' %}">Register</a>
+            <div class="dropdown-divider"></div> 
+            
+            <!-- <a class="btn btn-danger dropdown-item" href="{% url 'logout' %}">Log out</a> -->
+            <form method="POST" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger dropdown-item">Logout</button>
+            </form>
+          </div>
+        </li>
+
+      </ul>
+    </div>
+  </nav>
+  
+      {% block content %}
+
+
+      <section class="preloader">
+        <div class="spinner">
+            <span class="spinner-rotate"></span>
+        </div>
+    </section>
+
+    <main>
+
+        <section class="hero d-flex justify-content-center align-items-center" id="section_1">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-lg-7 col-12">
+                        <div class="hero-text">
+                            <div class="hero-title-wrap d-flex align-items-center mb-4">
+                                <img src="{% static 'images/happy-bearded-young-man.jpg' %}"
+                                    class="avatar-image avatar-image-large img-fluid" alt="">
+
+                                <h1 class="hero-title ms-3 mb-0">Hello friend!</h1>
+                            </div>
+
+                            <h2 class="mb-4">Are you ready for Swap Skills?</h2>
+                            <p class="mb-4"><a class="custom-btn btn custom-link" href="#section_2">Let's begin</a></p>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-5 col-12 position-relative">
+                        <div class="hero-image-wrap"></div>
+                        <img src="{% static 'images/portrait-happy-excited-man-holding-laptop-computer.png' %}"
+                            class="hero-image img-fluid" alt="">
+                    </div>
+
+                </div>
+            </div>
+
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+                <path fill="#535da1" fill-opacity="1"
+                    d="M0,160L24,160C48,160,96,160,144,138.7C192,117,240,75,288,64C336,53,384,75,432,106.7C480,139,528,181,576,208C624,235,672,245,720,240C768,235,816,213,864,186.7C912,160,960,128,1008,133.3C1056,139,1104,181,1152,202.7C1200,224,1248,224,1296,197.3C1344,171,1392,117,1416,90.7L1440,64L1440,0L1416,0C1392,0,1344,0,1296,0C1248,0,1200,0,1152,0C1104,0,1056,0,1008,0C960,0,912,0,864,0C816,0,768,0,720,0C672,0,624,0,576,0C528,0,480,0,432,0C384,0,336,0,288,0C240,0,192,0,144,0C96,0,48,0,24,0L0,0Z">
+                </path>
+            </svg>
+        </section>
+
+
+        <section class="about section-padding" id="section_2">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-lg-6 col-12">
+                        <img src="{% static 'images/couple-working-from-home-together-sofa.jpg" class="about-image img-fluid' %}"
+                            alt="">
+                    </div>
+
+                    <div class="col-lg-6 col-12 mt-5 mt-lg-0">
+                        <div class="about-thumb">
+
+                            <div class="section-title-wrap d-flex justify-content-end align-items-center mb-4">
+                                <h2 class="text-white me-4 mb-0">Exchange skills. Expand your horizons.</h2>
+
+                                <img src="{% static 'images/happy-bearded-young-man.jpg" class="avatar-image img-fluid' %}" alt="">
+                            </div>
+                            
+                                <p style="color:white">Join our community where everyone can learn and teach - all at the expense of virtual currency on our platform.</p>
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="featured section-padding">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-lg-6 col-12">
+                        <div class="profile-thumb">
+                            <div class="profile-title">
+                                <h4 class="mb-0">Information</h4>
+                            </div>
+
+                            <div class="profile-body">
+                                <p>
+                                    <span class="profile-small-title">Company</span>
+                                    <span>SkillSwap</span>
+                                </p>
+
+                                <p>
+                                    <span class="profile-small-title">Created</span>
+                                    <span>Aug 12, 2024</span>
+                                </p>
+
+                                <p>
+                                    <span class="profile-small-title">Phone</span>
+                                    <span><a href="tel: 305-240-9671">120-240-9600</a></span>
+                                </p>
+
+                                <p>
+                                    <span class="profile-small-title">Email</span>
+                                    <span><a href="mailto:hello@josh.design">hello@josh.design</a></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-12 mt-5 mt-lg-0">
+                        <div class="about-thumb">
+                            <div class="row">
+                                <div class="col-lg-6 col-6 featured-border-bottom py-2">
+                                    <strong class="featured-numbers">20+</strong>
+
+                                    <p class="featured-text">New courses</p>
+                                </div>
+
+                                <div class="col-lg-6 col-6 featured-border-start featured-border-bottom ps-5 py-2">
+                                    <strong class="featured-numbers">100+</strong>
+
+                                    <p class="featured-text">Happy Customers</p>
+                                </div>
+
+                                <div class="col-lg-6 col-6 pt-4">
+                                    <strong class="featured-numbers">640</strong>
+
+                                    <p class="featured-text">Project Finished</p>
+                                </div>
+
+                                <div class="col-lg-6 col-6 featured-border-start ps-5 pt-4">
+                                    <strong class="featured-numbers">10+</strong>
+
+                                    <p class="featured-text">Digital Awards</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+
+        <section class="projects section-padding" id="section_4">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-lg-8 col-md-8 col-12 ms-auto">
+                        <div class="section-title-wrap d-flex justify-content-center align-items-center mb-4">
+                            <img src="{% static 'images/white-desk-work-study-aesthetics.jpg' %}" class="avatar-image img-fluid"
+                                alt="">
+
+                            <h2 class="text-white ms-4 mb-0">Courses</h2>
+                        </div>
+                    </div>
+
+                    <div class="clearfix"></div>
+
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="projects-thumb">
+                            <div class="projects-info">
+                                <small class="projects-tag">Management</small>
+
+                                <h3 class="projects-title">CEO</h3>
+                            </div>
+
+                            <a href="{% static 'images/projects/nikhil-KO4io-eCAXA-unsplash.jpg' %}" class="popup-image">
+                                <img src="{% static 'images/projects/nikhil-KO4io-eCAXA-unsplash.jpg' %}"
+                                    class="projects-image img-fluid" alt="">
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="projects-thumb">
+                            <div class="projects-info">
+                                <small class="projects-tag">Mental pumping</small>
+
+                                <h3 class="projects-title">Multitasking for everyone</h3>
+                            </div>
+
+                            <a href="{% static 'images/projects/the-5th-IQYR7N67dhM-unsplash.jpg' %}" class="popup-image">
+                                <img src="{% static 'images/projects/the-5th-IQYR7N67dhM-unsplash.jpg' %}"
+                                    class="projects-image img-fluid" alt="">
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="projects-thumb">
+                            <div class="projects-info">
+                                <small class="projects-tag">Programing</small>
+
+                                <h3 class="projects-title">Python for beginers</h3>
+                            </div>
+
+                            <a href="{% static 'images/projects/true-agency-9Bjog5FZ-oc-unsplash.jpg' %}" class="popup-image">
+                                <img src="{% static 'images/projects/true-agency-9Bjog5FZ-oc-unsplash.jpg' %}"
+                                    class="projects-image img-fluid" alt="">
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="contact section-padding" id="section_5">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-lg-6 col-md-8 col-12">
+                        <div class="section-title-wrap d-flex justify-content-center align-items-center mb-5">
+                            <img src="{% static 'images/aerial-view-man-using-computer-laptop-wooden-table.jpg' %}"
+                                class="avatar-image img-fluid" alt="">
+
+                            <h2 class="text-white ms-4 mb-0">Say Hi</h2>
+                        </div>
+                    </div>
+
+                    <div class="clearfix"></div>
+
+                    <div class="col-lg-3 col-md-6 col-12 pe-lg-0">
+                        <div class="contact-info contact-info-border-start d-flex flex-column">
+                          
+                            <ul class="social-icon">
+                                <li class="social-icon-item"><a href="https://twitter.com/minthu"
+                                        class="social-icon-link bi-twitter"></a></li>
+
+                                <li class="social-icon-item"><a href="#" class="social-icon-link bi-instagram"></a></li>
+
+                                <li class="social-icon-item"><a href="#" class="social-icon-link bi-pinterest"></a></li>
+
+                                <li class="social-icon-item"><a href="https://www.youtube.com/templatemo"
+                                        class="social-icon-link bi-youtube"></a></li>
+                            </ul>
+
+                            <strong class="site-footer-title d-block mt-4 mb-3">Start a project</strong>
+
+                            <p class="mb-0">I’m available for freelance projects</p>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 col-12 ps-lg-0">
+                        <div class="contact-info d-flex flex-column">
+                            <strong class="site-footer-title d-block mb-3">About</strong>
+
+                            <p class="mb-2">
+                                Joshua is a professional web developer. Feel free to get in touch with me.
+                            </p>
+
+                            <strong class="site-footer-title d-block mt-4 mb-3">Email</strong>
+
+                            <p>
+                                <a href="mailto:hello@josh.design">
+                                    hello@josh.design
+                                </a>
+                            </p>
+
+                            <strong class="site-footer-title d-block mt-4 mb-3">Call</strong>
+
+                            <p class="mb-0">
+                                <a href="tel: 120-240-9600">
+                                    120-240-9600
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-12 mt-5 mt-lg-0">
+
+
+      
+                        <form action="{% url 'send_message' %}" method="post">
+                            {% csrf_token %}
+                              <!-- Name input-->
+                              <div class="form-floating mb-3">
+                                  <input class="form-control" id="name" type="text" name="name" placeholder="Enter your name..." data-sb-validations="required" required />
+                                  <label for="name">Full name</label>
+                                  <div class="invalid-feedback" data-sb-feedback="name:required">A name is required.</div>
+                              </div>
+                              <!-- Email address input-->
+                              <div class="form-floating mb-3">
+                                  <input class="form-control" id="email" type="email" name="email" placeholder="name@example.com" data-sb-validations="required,email" required />
+                                  <label for="email">Email address</label>
+                                  <div class="invalid-feedback" data-sb-feedback="email:required">An email is required.</div>
+                                  <div class="invalid-feedback" data-sb-feedback="email:email">Email is not valid.</div>
+                              </div>
+                              <!-- Phone number input-->
+                             <div class="form-floating mb-3">
+                                  <input class="form-control" id="phone" type="tel" name="phone" placeholder="(123) 456-7890" data-sb-validations="required" required />
+                                  <label for="phone">Phone number</label>
+                                  <div class="invalid-feedback" data-sb-feedback="phone:required">A phone number is required.</div>
+                              </div>
+                              <!-- Captcha input -->
+                              <div class="g-recaptcha" data-sitekey="6LfcLW8kAAAAAB4r0HUc3BYgogZejPXAX2TUxqlp" aria-required="true"></div>
+                      
+                              <!-- Message input-->
+                              <div class="form-floating mb-3">
+                                  <textarea class="form-control" id="message" type="text" name="message" placeholder="Enter your message here..." style="height: 10rem" data-sb-validations="required" required></textarea>
+                                  <label for="message">Message</label>
+                                  <div class="invalid-feedback" data-sb-feedback="message:required">A message is required.</div>
+                              </div>
+                              {% if not user.is_authenticated %} 
+                                <a class="btn btn-info" href="{% url 'login' %}">Authorize first</a>
+                              {% else %}  
+                              <!-- <button class="btn btn-primary btn-xl enabled" id="submitButton" type="submit">Send</button> -->
+                              <button  id="submitButton" type="submit" class="btn btn-primary">Submit
+                              </button>
+                              {% endif %}  
+                            
+                            
+                          </form>
+                    </div>
+
+                </div>
+            </div>
+            </div>
+        </section>
+
+    </main>
+
+
+  </div>
+
+  
+  <!-- <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
+        async defer>
+        </script>
+
+        <script>
+          window.addEventListener('load', () => {
+          const $recaptcha = document.querySelector('#g-recaptcha-response');
+          if ($recaptcha) {
+            $recaptcha.setAttribute('required', 'required');
+          }
+        })
+        </script> -->
+
+        <script src="{% static 'bot.js' %}"></script>
+
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/scripts.js"></script>
+      </body>
+
+
+         <!-- ======= Footer ======= -->
+  <footer id="footer">
+
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+
+          <div class="col-lg-3 col-md-6 footer-contact">
+            <h3>SkillSwap</h3>
+            <p>
+              A108 Adam Street <br>
+              New York, NY 535022<br>
+              United States <br><br>
+              <strong>Phone:</strong> +1 5589 55488 55<br>
+              <strong>Email:</strong> info@example.com<br>
+            </p>
+          </div>
+
+          <div class="col-lg-2 col-md-6 footer-links">
+            <h4>Useful Links</h4>
+            <ul>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Home</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">About us</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#features">Features</a></li>
+              <!-- <li><i class="bx bx-chevron-right"></i> <a href="#">Terms of service</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Privacy policy</a></li> -->
+            </ul>
+          </div>
+
+
+          <!-- <div class="col-lg-4 col-md-6 footer-newsletter">
+            <h4>Join Our Newsletter</h4>
+            <p>Tamen quem nulla quae legam multos aute sint culpa legam noster magna</p>
+            <form action="" method="post">
+              <input type="email" name="email"><input type="submit" value="Subscribe">
+            </form>
+          </div> -->
+
+        </div>
+      </div>
+    </div>
+
+    <div class="container d-md-flex py-4">
+
+      <div class="me-md-auto text-center text-md-start">
+        <div class="copyright">
+          &copy; Copyright <strong><span>SkillSwap</span></strong>. All Rights Reserved
+        </div>
+        <div class="credits">
+          <!-- All the links in the footer should remain intact. -->
+          <!-- You can delete the links only if you purchased the pro version. -->
+          <!-- Licensing information: https://bootstrapmade.com/license/ -->
+          <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/bikin-free-simple-landing-page-template/ -->
+          <!-- Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> -->
+        </div>
+      </div>
+      
+    </div>
+  </footer><!-- End Footer -->
+
+      {% endblock %}
+    <!-- </div> -->
+       
+    <!--reCaptcha js  -->
+    <script>
+      function onSubmit(token) {
+        alert('Captcha is working')
+        document.getElementById("demo-form").submit();
+      }
+   </script>
+
+  
+
+
+
+<!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
+
+{% comment %} new js files {% endcomment %}
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/jquery.sticky.js' %}"></script>
+    <script src="{% static 'js/click-scroll.js' %}"></script>
+    <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+    <script src="{% static 'js/magnific-popup-options.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+
+
+
+</body>
+</html>
+
